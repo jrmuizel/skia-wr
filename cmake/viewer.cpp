@@ -36,8 +36,8 @@
 
 #include "yaml-cpp/yaml.h"
 
-static int gWidth = 1920;
-static int gHeight = 1080;
+static int gWidth = 1024;
+static int gHeight = 768;
 
 extern YAML::Node loadYAMLFile(const char *file);
 extern void drawYAMLFile(YAML::Node &doc, SkCanvas *canvas);
@@ -253,6 +253,9 @@ main(int argc, char** argv)
         }
     }
 
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    printf("viewport %d %d\n", width, height);
     glClearColor(0.0f,1.0f,0.0f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     SkCanvas* canvas = fSurface->getCanvas();   // We don't manage this pointer's lifetime.
@@ -291,6 +294,7 @@ main(int argc, char** argv)
         }
 
         canvas->clear(SK_ColorWHITE);
+        glViewport(0, 0, width, 768);
         canvas->drawPicture(pic, &scaleMatrix, nullptr);
         canvas->flush();
         glfwSwapBuffers(window);
