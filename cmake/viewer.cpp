@@ -46,7 +46,7 @@ double percentile(std::vector<double> &values, int pct_int)
 {
     double pct = pct_int / 100.;
     double index_f = (values.size()-1) * pct;
-    size_t index = std::floor(index_f);
+    size_t index = floor(index_f);
     printf("size: %zd pct: %d index: %f\n", values.size(), pct_int, index_f);
     if (index == index_f) {
         return values[index];
@@ -344,13 +344,13 @@ main(int argc, char** argv)
 #define F(x) (1000.0 / (x))
 
             if (false) {
-                printf("-     % 8s  % 8s  % 8s  % 8s  % 8s\n", "min", "90th", "avg", "10th", "max");
+                printf("-     %8s  %8s  %8s  %8s  %8s\n", "min", "90th", "avg", "10th", "max");
                 printf("ms:   % 8.3f  % 8.3f  % 8.3f  % 8.3f  % 8.3f\n",
                        block_avg_ms.front(), val_10th_pct, average_ms, val_90th_pct, block_avg_ms.back());
                 printf("fps:  % 8.3f  % 8.3f  % 8.3f  % 8.3f  % 8.3f\n",
                        F(block_avg_ms.front()), F(val_10th_pct), F(average_ms), F(val_90th_pct), F(block_avg_ms.back()));
             } else {
-                printf("-     % 8s  % 8s  % 8s\n", "90th", "avg", "10th");
+                printf("-     %8s  %8s  %8s\n", "90th", "avg", "10th");
                 printf("ms:   % 8.3f  % 8.3f  % 8.3f\n",
                        val_10th_pct, average_ms, val_90th_pct);
                 printf("fps:  % 8.3f  % 8.3f  % 8.3f\n",
