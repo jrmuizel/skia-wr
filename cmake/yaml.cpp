@@ -167,6 +167,23 @@ void drawRect(SkCanvas *c, YAML::Node &item) {
 
 }
 
+void drawBorder(SkCanvas *c, YAML::Node &item) {
+    SkRect bounds;
+    if (item["rect"])
+            bounds = item["rect"].as<SkRect>();
+    else
+            bounds = item["bounds"].as<SkRect>();
+
+    SkPaint paint;
+    if (item["color"] && item["color"].IsScalar()) {
+        auto color = item["color"].as<SkColorW>().color;
+        paint.setColor(color);
+    }
+    paint.setStyle(SkPaint::kStroke_Style);
+    c->drawRect(bounds, paint);
+
+}
+
 void drawGlyphs(SkCanvas *c, YAML::Node &item) {
     // XXX: handle bounds
     vector<uint16_t> indices;
@@ -245,7 +262,10 @@ void drawItem(SkCanvas *c, YAML::Node &node) {
             drawStackingContext(c, node);
         } else if (type == "rect") {
             drawRect(c, node);
+        } else if (type == "border") {
+            drawBorder(c, node);
         }
+
     }
 
 }
