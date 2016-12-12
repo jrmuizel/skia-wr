@@ -29,6 +29,8 @@
 #define PLATFORM_EXPORT
 #include "LayoutUnits.h"
 #include "FloatRoundedRect.h"
+#include <assert.h>
+#define ASSERT(X) assert(x)
 #if 0
 #include "platform/geometry/FloatQuad.h"
 #include "wtf/text/WTFString.h"
@@ -77,6 +79,7 @@ void FloatRoundedRect::Radii::scale(float factor)
     if (!m_bottomRight.width() || !m_bottomRight.height())
         m_bottomRight = FloatSize();
 }
+#endif
 
 void FloatRoundedRect::Radii::scaleAndFloor(float factor)
 {
@@ -98,7 +101,6 @@ void FloatRoundedRect::Radii::scaleAndFloor(float factor)
         m_bottomRight = FloatSize();
 }
 
-
 void FloatRoundedRect::Radii::shrink(float topWidth, float bottomWidth, float leftWidth, float rightWidth)
 {
     ASSERT(topWidth >= 0 && bottomWidth >= 0 && leftWidth >= 0 && rightWidth >= 0);
@@ -115,6 +117,7 @@ void FloatRoundedRect::Radii::shrink(float topWidth, float bottomWidth, float le
     m_bottomRight.setWidth(std::max<float>(0, m_bottomRight.width() - rightWidth));
     m_bottomRight.setHeight(std::max<float>(0, m_bottomRight.height() - bottomWidth));
 }
+#if 0
 
 void FloatRoundedRect::Radii::expand(float topWidth, float bottomWidth, float leftWidth, float rightWidth)
 {
@@ -255,7 +258,7 @@ bool FloatRoundedRect::intersectsQuad(const FloatQuad& quad) const
 
     return true;
 }
-
+#endif
 void FloatRoundedRect::Radii::includeLogicalEdges(const FloatRoundedRect::Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     if (includeLogicalLeftEdge) {
@@ -303,7 +306,6 @@ float calcBorderRadiiConstraintScaleFor(const FloatRect& rect, const FloatRounde
     ASSERT(factor <= 1);
     return factor;
 }
-
 void FloatRoundedRect::constrainRadii()
 {
     m_radii.scaleAndFloor(calcBorderRadiiConstraintScaleFor(rect(), getRadii()));
@@ -313,7 +315,6 @@ void FloatRoundedRect::includeLogicalEdges(const Radii& edges, bool isHorizontal
 {
     m_radii.includeLogicalEdges(edges, isHorizontal, includeLogicalLeftEdge, includeLogicalRightEdge);
 }
-#endif
 bool FloatRoundedRect::isRenderable() const
 {
     // FIXME: remove the 0.0001 slop once this class is converted to layout units.
