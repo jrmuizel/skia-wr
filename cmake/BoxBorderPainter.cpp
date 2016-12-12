@@ -557,7 +557,7 @@ BoxBorderPainter::BoxBorderPainter(const LayoutRect& borderRect, const ComputedS
     // No need to compute the rrects if we don't have any borders to draw.
     if (!m_visibleEdgeSet)
         return;
-#if 0
+#if 1
     m_outer = m_style.getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
     m_inner = m_style.getRoundedInnerBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
 #endif
@@ -958,7 +958,6 @@ void BoxBorderPainter::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         graphicsContext.strokePath(borderPath);
         return;
     }
-#if 0
     case BorderStyleDouble: {
         // Draw inner border line
         {
@@ -994,7 +993,6 @@ void BoxBorderPainter::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         }
         return;
     }
-#endif
     case BorderStyleRidge:
     case BorderStyleGroove:
     {
@@ -1019,13 +1017,11 @@ void BoxBorderPainter::drawBoxSideFromPath(GraphicsContext& graphicsContext,
         LayoutUnit leftWidth(m_edges[BSLeft].usedWidth() / 2);
         LayoutUnit rightWidth(m_edges[BSRight].usedWidth() / 2);
 
-        assert(0);
-#if 0
         FloatRoundedRect clipRect = m_style.getRoundedInnerBorderFor(borderRect,
             LayoutRectOutsets(-topWidth, -rightWidth, -bottomWidth, -leftWidth),
             m_includeLogicalLeftEdge, m_includeLogicalRightEdge);
         graphicsContext.clipRoundedRect(clipRect);
-#endif
+
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness,
             side, color, s2);
         return;

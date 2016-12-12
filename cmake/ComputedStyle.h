@@ -3,6 +3,15 @@ namespace blink {
 class ComputedStyle {
     public:
 
+    FloatRoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const {
+    FloatRoundedRect roundedRect(pixelSnappedIntRect(borderRect));
+    if (hasBorderRadius()) {
+        FloatRoundedRect::Radii radii = calcRadiiFor(m_border, borderRect.size());
+        roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
+        roundedRect.constrainRadii();
+    }
+    return roundedRect;
+} 
         FloatRoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect,
                                                   const LayoutRectOutsets insets, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const {
             LayoutRect innerRect(borderRect);
