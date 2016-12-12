@@ -75,7 +75,7 @@ public:
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
     FloatRect(const IntRect&);
     //explicit FloatRect(const LayoutRect&);
-    //FloatRect(const SkRect&);
+    FloatRect(const SkRect& r) : m_location(r.fLeft, r.fTop), m_size(r.width(), r.height()) {}
 
     static FloatRect narrowPrecision(double x, double y, double width, double height);
 

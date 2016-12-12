@@ -27,7 +27,9 @@
 #include <assert.h>
 
 #include "yaml-cpp/yaml.h"
-
+#include "BoxBorderPainter.h"
+#include "GraphicsContext.h"
+#include "ComputedStyle.h"
 using namespace std;
 
 // SkColor is typdef to unsigned int so we wrap
@@ -105,6 +107,36 @@ struct convert<vector<double>> {
     }
 };
 
+blink::EBorderStyle toStyle(string s)
+{
+    if (s == "none") { return blink::BorderStyleNone; }
+    if (s == "hidden") { return blink::BorderStyleHidden; }
+    if (s == "inset") { return blink::BorderStyleInset; }
+    if (s == "groove") { return blink::BorderStyleGroove; }
+    if (s == "outset") { return blink::BorderStyleOutset; }
+    if (s == "ridge") { return blink::BorderStyleRidge; }
+    if (s == "dotted") { return blink::BorderStyleDotted; }
+    if (s == "dashed") { return blink::BorderStyleDashed; }
+    if (s == "solid") { return blink::BorderStyleSolid; }
+    if (s == "double") { return blink::BorderStyleDouble; }
+    assert(false);
+    return blink::BorderStyleNone;
+}
+
+template<>
+struct convert<vector<blink::EBorderStyle>> {
+    static bool decode(const Node& node, vector<blink::EBorderStyle>& rhs) {
+        for (auto &n : node) {
+            vector<blink::EBorderStyle> vec;
+            vec.push_back(toStyle(n.as<string>()));
+            rhs = vec;
+            return true;
+        }
+        return false;
+    }
+};
+
+
 template<>
 struct convert<SkRect> {
     static bool decode(const Node& node, SkRect& rhs) {
@@ -116,6 +148,43 @@ struct convert<SkRect> {
                                    vec[3]);
             return true;
         }
+        return false;
+    }
+};
+
+struct BorderRadius
+{
+    blink::FloatSize top_left;
+    blink::FloatSize top_right;
+    blink::FloatSize bottom_left;
+    blink::FloatSize bottom_right;
+};
+
+template<>
+struct convert<blink::FloatSize> {
+    static bool decode(const Node& node, blink::FloatSize& rhs) {
+        using namespace blink;
+        auto s = node.as<vector<double>>();
+        rhs = FloatSize(s[0], s[1]);
+        return true;
+    }
+};
+
+
+template<>
+struct convert<BorderRadius> {
+    static bool decode(const Node& node, BorderRadius& rhs) {
+        using namespace blink;
+        if (node.IsScalar()) {
+            auto val = node.as<double>();
+            rhs.top_left = rhs.top_right = rhs.bottom_left = rhs.bottom_right = FloatSize(val,val);
+            return true;
+        }
+        rhs.top_left = node["top_left"].as<FloatSize>();
+        rhs.top_right = node["top_right"].as<FloatSize>();
+        rhs.bottom_left = node["bottom_left"].as<FloatSize>();
+        rhs.bottom_right = node["bottom_right"].as<FloatSize>();
+
         return false;
     }
 };
@@ -167,21 +236,59 @@ void drawRect(SkCanvas *c, YAML::Node &item) {
 
 }
 
+template<typename T>
+void broadcast(vector<T> &v, int num_items)
+{
+    while (v.size() < num_items) {
+        v.push_back(v[0]);
+    }
+}
+
 void drawBorder(SkCanvas *c, YAML::Node &item) {
+    using namespace blink;
     SkRect bounds;
     if (item["rect"])
             bounds = item["rect"].as<SkRect>();
     else
             bounds = item["bounds"].as<SkRect>();
 
+    auto widths = item["width"].as<vector<int>>();
+    auto styles = item["style"].as<vector<blink::EBorderStyle>>();
+
+    broadcast(widths, 4);
+    broadcast(styles, 4);
     SkPaint paint;
     if (item["color"] && item["color"].IsScalar()) {
         auto color = item["color"].as<SkColorW>().color;
         paint.setColor(color);
     }
-    paint.setStyle(SkPaint::kStroke_Style);
-    c->drawRect(bounds, paint);
+    blink::GraphicsContext context(c);
+    blink::PaintInfo info(context);
+    blink::ComputedStyle::BorderData b;
 
+    b.m_topWidth = widths[0];
+    b.m_leftWidth = widths[1];
+    b.m_bottomWidth = widths[2];
+    b.m_rightWidth = widths[3];
+
+    b.m_topStyle = styles[0];
+    b.m_leftStyle = styles[1];
+    b.m_bottomStyle = styles[2];
+    b.m_rightStyle = styles[3];
+
+    auto radius = item["radius"].as<YAML::BorderRadius>();
+
+    b.m_topLeft = radius.top_left;
+    b.m_topRight = radius.top_right;
+    b.m_bottomLeft = radius.bottom_left;
+    b.m_bottomRight = radius.bottom_right;
+
+    blink::ComputedStyle style;
+    style.m_border = b;
+    blink::LayoutRect borderRect = bounds;
+    BoxBorderPainter painter(borderRect, style, blink::BackgroundBleedNone,
+                             true, true);
+    painter.paintBorder(info, borderRect);
 }
 
 void drawGlyphs(SkCanvas *c, YAML::Node &item) {

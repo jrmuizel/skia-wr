@@ -31,6 +31,7 @@ typedef std::vector<DashArrayElement> DashArray;
 
 struct GraphicsContext
 {
+        GraphicsContext(SkCanvas *c) : m_canvas(c) {}
         SkCanvas* m_canvas;
         bool mShouldAntialias = true;
         bool shouldAntialias() { return mShouldAntialias; }

@@ -16,8 +16,9 @@ class IntRect;
 class LayoutBox;
 //class LayoutRect;
 typedef FloatRect LayoutRect;
-struct PaintInfo 
+struct PaintInfo
 {
+        PaintInfo(GraphicsContext &context) : context(context) {}
         GraphicsContext &context;
 };
 typedef SkPath Path;
