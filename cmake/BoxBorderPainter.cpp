@@ -551,7 +551,7 @@ BoxBorderPainter::BoxBorderPainter(const LayoutRect& borderRect, const ComputedS
     , m_isRounded(false)
     , m_hasAlpha(false)
 {
-    //style.getBorderEdgeInfo(m_edges, includeLogicalLeftEdge, includeLogicalRightEdge);
+    style.getBorderEdgeInfo(m_edges, includeLogicalLeftEdge, includeLogicalRightEdge);
     computeBorderProperties();
 
     // No need to compute the rrects if we don't have any borders to draw.
