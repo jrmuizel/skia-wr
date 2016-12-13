@@ -279,8 +279,11 @@ typedef FloatRect LayoutRect;
 
 inline FloatRect pixelSnappedIntRect(FloatRect rect)
 {
-        assert(false);
-        return rect;
+    assert(floor(rect.x()) == rect.x());
+    assert(floor(rect.y()) == rect.y());
+    assert(floor(rect.width()) == rect.width());
+    assert(floor(rect.height()) == rect.height());
+    return rect;
 }
 
 

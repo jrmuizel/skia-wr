@@ -30,7 +30,7 @@
 #include "LayoutUnits.h"
 #include "FloatRoundedRect.h"
 #include <assert.h>
-#define ASSERT(X) assert(x)
+#define ASSERT(X) assert(X)
 #if 0
 #include "platform/geometry/FloatQuad.h"
 #include "wtf/text/WTFString.h"

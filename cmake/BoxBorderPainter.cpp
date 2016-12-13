@@ -10,6 +10,7 @@
 #include "LayoutUnits.h"
 #include "LayoutRectOutsets.h"
 #include "ComputedStyle.h"
+#include "ObjectPainter.h"
 #if 0
 #include "core/paint/BoxPainter.h"
 #include "core/paint/ObjectPainter.h"
@@ -398,7 +399,7 @@ struct BoxBorderPainter::ComplexBorderInfo {
             if (includesEdge(borderPainter.m_visibleEdgeSet, side))
                 sortedSides.push_back(side);
         }
-        ASSERT(!sortedSides.isEmpty());
+        ASSERT(!sortedSides.empty());
 
         // Then sort them in paint order, based on three (prioritized) criteria: alpha, style, side.
         std::sort(sortedSides.begin(), sortedSides.end(),
@@ -449,13 +450,13 @@ private:
                 currentAlpha = edgeAlpha;
             }
 
-            ASSERT(!opacityGroups.isEmpty());
+            ASSERT(!opacityGroups.empty());
             OpacityGroup& currentGroup = opacityGroups.back();
             currentGroup.sides.push_back(side);
             currentGroup.edgeFlags |= edgeFlagForSide(side);
         }
 
-        ASSERT(!opacityGroups.isEmpty());
+        ASSERT(!opacityGroups.empty());
     }
 };
 
@@ -882,12 +883,11 @@ void BoxBorderPainter::paintOneBorderSide(GraphicsContext& graphicsContext,
             miter1 = miter2 = NoMiter;
         }
 
-        assert(0);
-        /*
+
         ObjectPainter::drawLineForBoxSide(graphicsContext, sideRect.x(), sideRect.y(),
             sideRect.maxX(), sideRect.maxY(), side, color, edgeToRender.borderStyle(),
             miter1 != NoMiter ? adjacentEdge1.width : 0, miter2 != NoMiter ? adjacentEdge2.width : 0,
-            antialias);*/
+            antialias);
     }
 }
 

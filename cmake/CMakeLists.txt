@@ -372,6 +372,6 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 
-add_executable(viewer viewer.cpp yaml.cpp Color.cpp FloatRoundedRect.cpp FloatPoint.cpp BoxBorderPainter.cpp BorderEdge.cpp ${VIEWER_MANIFEST})
+add_executable(viewer viewer.cpp yaml.cpp Color.cpp FloatRoundedRect.cpp FloatPoint.cpp BoxBorderPainter.cpp BorderEdge.cpp ObjectPainter.cpp ${VIEWER_MANIFEST})
 
 target_link_libraries(viewer skia yaml-cpp ${OPENGL_LIBRARIES} ${WIN32_LIBS} glfw)

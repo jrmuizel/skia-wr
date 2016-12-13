@@ -5,23 +5,24 @@
 #ifndef ObjectPainter_h
 #define ObjectPainter_h
 
-#include "core/style/ComputedStyleConstants.h"
-#include "wtf/Allocator.h"
-#include "wtf/Vector.h"
+//#include "core/style/ComputedStyleConstants.h"
+//#include "wtf/Allocator.h"
+//#include "wtf/Vector.h"
+#include "Color.h"
 
 namespace blink {
 
 class Color;
 class GraphicsContext;
 class LayoutPoint;
-class LayoutRect;
+//class LayoutRect;
 class LayoutSize;
 struct PaintInfo;
 class LayoutObject;
 class ComputedStyle;
 
 class ObjectPainter {
-    STACK_ALLOCATED();
+//    STACK_ALLOCATED();
 public:
     ObjectPainter(const LayoutObject& layoutObject) : m_layoutObject(layoutObject) { }
 

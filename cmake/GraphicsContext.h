@@ -1,6 +1,7 @@
 #include "Color.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
+#include "IntPoint.h"
 #include "../include/core/SkPath.h"
 #include "../include/core/SkPaint.h"
 #include "../include/core/SkCanvas.h"
@@ -39,6 +40,7 @@ struct GraphicsContext
 
         StrokeStyle mStrokeStyle;
         void setStrokeStyle(StrokeStyle s) { mStrokeStyle = s; }
+        StrokeStyle getStrokeStyle() { return mStrokeStyle; }
 
         Color mStrokeColor;
         void setStrokeColor(Color c) { mStrokeColor = c; }
@@ -64,8 +66,28 @@ struct GraphicsContext
             m_canvas->drawRect(rect, paint);
         }
 
+        void fillRect(const SkRect &rect, Color color) {
+            SkPaint paint;
+            paint.setColor(color.rgb());
+            m_canvas->drawRect(rect, paint);
+        }
+
+
+        void drawLine(IntPoint start, IntPoint end) {
+            SkPaint paint;
+            paint.setColor(mStrokeColor.rgb());
+            paint.setStyle(SkPaint::kStroke_Style);
+            paint.setStrokeWidth(m_strokeThickness);
+            m_canvas->drawLine(start.x(), start.y(), end.x(), end.y(), paint);
+        }
+
         void clip(const FloatRect& rect) { clipRect(rect); }
 
+        SkPaint fillPaint() {
+            SkPaint paint;
+            paint.setColor(mFillColor.rgb());
+            return paint;
+        }
 
         void fillPath(SkPath &path) {
             SkPaint paint;

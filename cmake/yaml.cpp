@@ -126,13 +126,12 @@ blink::EBorderStyle toStyle(string s)
 template<>
 struct convert<vector<blink::EBorderStyle>> {
     static bool decode(const Node& node, vector<blink::EBorderStyle>& rhs) {
+        vector<blink::EBorderStyle> vec;
         for (auto &n : node) {
-            vector<blink::EBorderStyle> vec;
             vec.push_back(toStyle(n.as<string>()));
-            rhs = vec;
-            return true;
         }
-        return false;
+        rhs = vec;
+        return true;
     }
 };
 
@@ -185,7 +184,7 @@ struct convert<BorderRadius> {
         rhs.bottom_left = node["bottom_left"].as<FloatSize>();
         rhs.bottom_right = node["bottom_right"].as<FloatSize>();
 
-        return false;
+        return true;
     }
 };
 
@@ -254,14 +253,15 @@ void drawBorder(SkCanvas *c, YAML::Node &item) {
 
     auto widths = item["width"].as<vector<int>>();
     auto styles = item["style"].as<vector<blink::EBorderStyle>>();
+    auto colors = item["color"].as<vector<SkColorW>>();
 
     broadcast(widths, 4);
     broadcast(styles, 4);
-    SkPaint paint;
-    if (item["color"] && item["color"].IsScalar()) {
+    broadcast(colors, 4);
+/*    if (item["color"] && item["color"].IsScalar()) {
         auto color = item["color"].as<SkColorW>().color;
-        paint.setColor(color);
-    }
+    } else {
+*/
     blink::GraphicsContext context(c);
     blink::PaintInfo info(context);
     blink::ComputedStyle::BorderData b;
@@ -275,6 +275,11 @@ void drawBorder(SkCanvas *c, YAML::Node &item) {
     b.m_leftStyle = styles[1];
     b.m_bottomStyle = styles[2];
     b.m_rightStyle = styles[3];
+
+    b.m_topColor = colors[0].color;
+    b.m_leftColor = colors[1].color;
+    b.m_bottomColor = colors[2].color;
+    b.m_rightColor = colors[3].color;
 
     auto radius = item["radius"].as<YAML::BorderRadius>();
 

@@ -7,36 +7,44 @@ class ComputedStyle {
         {
             bool horizontal = isHorizontalWritingMode();
             edges[BSTop] = BorderEdge(m_border.borderTopWidth(),
-                                      Color(),
+                                      m_border.m_topColor,
                                       m_border.borderTopStyle(),
                                       horizontal || includeLogicalLeftEdge);
 
 	    edges[BSRight] = BorderEdge(m_border.borderRightWidth(),
-					Color(),
+					m_border.m_rightColor,
 					m_border.borderRightStyle(),
 					!horizontal || includeLogicalRightEdge);
 
 	    edges[BSBottom] = BorderEdge(m_border.borderBottomWidth(),
-					 Color(),
+					 m_border.m_bottomColor,
 					 m_border.borderBottomStyle(),
 					 horizontal || includeLogicalRightEdge);
 
 	    edges[BSLeft] = BorderEdge(m_border.borderLeftWidth(),
-				       Color(),
+				       m_border.m_leftColor,
 				       m_border.borderLeftStyle(),
 				       !horizontal || includeLogicalLeftEdge);
 
         }
 
         FloatRoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const {
-            FloatRoundedRect roundedRect(pixelSnappedIntRect(borderRect));
-            if (hasBorderRadius()) {
-                FloatRoundedRect::Radii radii = calcRadiiFor(m_border, borderRect.size());
-                roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
-                roundedRect.constrainRadii();
-            }
-            return roundedRect;
+	    bool horizontal = isHorizontalWritingMode();
+
+	    int leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
+	    int rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
+	    int topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
+	    int bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
+
+	    return getRoundedInnerBorderFor(borderRect,
+		LayoutRectOutsets(-topWidth, -rightWidth, -bottomWidth, -leftWidth),
+		includeLogicalLeftEdge, includeLogicalRightEdge);
         }
+	int borderLeftWidth() const { return m_border.borderLeftWidth(); }
+	int borderRightWidth() const { return m_border.borderRightWidth(); }
+	int borderTopWidth() const { return m_border.borderTopWidth(); }
+	int borderBottomWidth() const { return m_border.borderBottomWidth(); }
+
         FloatRoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect,
                                                   const LayoutRectOutsets insets, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const {
             LayoutRect innerRect(borderRect);
@@ -68,8 +76,7 @@ class ComputedStyle {
             return roundedRect;
         }
 
-        bool hasBorderRadius() const { return m_hasBorderRadius; }
-        bool m_hasBorderRadius;
+        bool hasBorderRadius() const { return m_border.hasBorderRadius(); }
 
         bool isHorizontalWritingMode() const { return true; }
         struct BorderData {
@@ -81,6 +88,11 @@ class ComputedStyle {
             int m_bottomWidth;
             int m_leftWidth;
             int m_rightWidth;
+
+            Color m_topColor;
+            Color m_bottomColor;
+            Color m_leftColor;
+            Color m_rightColor;
 
             EBorderStyle m_topStyle;
             EBorderStyle m_bottomStyle;
@@ -101,6 +113,19 @@ class ComputedStyle {
             FloatSize topRight() const { return m_topRight; }
             FloatSize bottomLeft() const { return m_bottomLeft; }
             FloatSize bottomRight() const { return m_bottomRight; }
+            bool hasBorderRadius() const
+            {
+                if (m_topLeft.width() != 0.)
+                    return true;
+                if (m_topRight.width() != 0.)
+                    return true;
+                if (m_bottomLeft.width() != 0.)
+                    return true;
+                if (m_bottomRight.width() != 0.)
+                    return true;
+                return false;
+            }
+
         };
 
         BorderData  m_border;
