@@ -256,7 +256,7 @@ inline int clampTo(double x)
 {
     if (x > INT_MAX)
         return INT_MAX;
-    else if (x > INT_MIN)
+    else if (x < INT_MIN)
         return INT_MIN;
     return x;
 }
