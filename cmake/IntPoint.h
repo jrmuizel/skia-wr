@@ -41,6 +41,8 @@ typedef struct CGPoint CGPoint;
 #endif
 #endif
 #endif
+#include <stdint.h>
+#include <iostream>
 #include "IntSize.h"
 
 namespace blink {

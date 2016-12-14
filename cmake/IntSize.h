@@ -40,6 +40,7 @@ typedef struct CGSize CGSize;
 #endif
 #endif
 #endif
+#include <iostream>
 #define PLATFORM_EXPORT
 namespace gfx {
 class Size;

@@ -33,6 +33,7 @@
 #include "LayoutRectOutsets.h"
 #include "IntRect.h"
 #include <assert.h>
+#include <iostream>
 #if 0
 #include "platform/geometry/FloatRectOutsets.h"
 #include "third_party/skia/include/core/SkRect.h"
