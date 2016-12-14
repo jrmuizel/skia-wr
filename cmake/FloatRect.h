@@ -31,6 +31,7 @@
 #include "../include/core/SkRect.h"
 #include "FloatPoint.h"
 #include "LayoutRectOutsets.h"
+#include "IntRect.h"
 #include <assert.h>
 #if 0
 #include "platform/geometry/FloatRectOutsets.h"
@@ -73,7 +74,7 @@ public:
         : m_location(location), m_size(size) { }
     FloatRect(float x, float y, float width, float height)
         : m_location(FloatPoint(x, y)), m_size(FloatSize(width, height)) { }
-    FloatRect(const IntRect&);
+    FloatRect(const IntRect& r) : m_location(r.x(), r.y()), m_size(r.width(), r.height()) {}
     //explicit FloatRect(const LayoutRect&);
     FloatRect(const SkRect& r) : m_location(r.fLeft, r.fTop), m_size(r.width(), r.height()) {}
 
@@ -279,11 +280,9 @@ typedef FloatRect LayoutRect;
 
 inline FloatRect pixelSnappedIntRect(FloatRect rect)
 {
-    assert(floor(rect.x()) == rect.x());
-    assert(floor(rect.y()) == rect.y());
-    assert(floor(rect.width()) == rect.width());
-    assert(floor(rect.height()) == rect.height());
-    return rect;
+    return IntRect(roundedIntPoint(rect.location()), IntSize(
+        snapSizeToPixel(rect.width(), rect.x()),
+        snapSizeToPixel(rect.height(), rect.y())));
 }
 
 

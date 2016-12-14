@@ -127,7 +127,9 @@ template<>
 struct convert<vector<blink::EBorderStyle>> {
     static bool decode(const Node& node, vector<blink::EBorderStyle>& rhs) {
         vector<blink::EBorderStyle> vec;
-        for (auto &n : node) {
+        if (node.IsScalar())
+            vec.push_back(toStyle(node.as<string>()));
+        else for (auto &n : node) {
             vec.push_back(toStyle(n.as<string>()));
         }
         rhs = vec;
@@ -174,6 +176,7 @@ template<>
 struct convert<BorderRadius> {
     static bool decode(const Node& node, BorderRadius& rhs) {
         using namespace blink;
+
         if (node.IsScalar()) {
             auto val = node.as<double>();
             rhs.top_left = rhs.top_right = rhs.bottom_left = rhs.bottom_right = FloatSize(val,val);
@@ -251,10 +254,19 @@ void drawBorder(SkCanvas *c, YAML::Node &item) {
     else
             bounds = item["bounds"].as<SkRect>();
 
-    auto widths = item["width"].as<vector<int>>();
+    vector<int> widths;
+    if (item["width"].IsScalar()) {
+        widths.push_back(item["width"].as<int>());
+    } else {
+        widths = item["width"].as<vector<int>>();
+    }
     auto styles = item["style"].as<vector<blink::EBorderStyle>>();
-    auto colors = item["color"].as<vector<SkColorW>>();
-
+    vector<SkColorW> colors;
+    if (item["color"].IsScalar()) {
+        colors.push_back(item["color"].as<SkColorW>());
+    } else {
+        colors = item["color"].as<vector<SkColorW>>();
+    }
     broadcast(widths, 4);
     broadcast(styles, 4);
     broadcast(colors, 4);
@@ -281,12 +293,14 @@ void drawBorder(SkCanvas *c, YAML::Node &item) {
     b.m_bottomColor = colors[2].color;
     b.m_rightColor = colors[3].color;
 
-    auto radius = item["radius"].as<YAML::BorderRadius>();
+    if (item["radius"]) {
+        auto radius = item["radius"].as<YAML::BorderRadius>();
 
-    b.m_topLeft = radius.top_left;
-    b.m_topRight = radius.top_right;
-    b.m_bottomLeft = radius.bottom_left;
-    b.m_bottomRight = radius.bottom_right;
+        b.m_topLeft = radius.top_left;
+        b.m_topRight = radius.top_right;
+        b.m_bottomLeft = radius.bottom_left;
+        b.m_bottomRight = radius.bottom_right;
+    }
 
     blink::ComputedStyle style;
     style.m_border = b;
@@ -341,7 +355,6 @@ void drawGlyphs(SkCanvas *c, YAML::Node &item) {
 
 void drawImage(SkCanvas *c, YAML::Node &node) {
     auto path = makeResourcePath(node["image"].as<string>());
-    //std::cout << "image path: " << path << std::endl;
     auto bounds = node["bounds"].as<vector<double>>();
     sk_sp<SkImage> img = GetResourceAsImage(path.c_str());
     c->drawImage(img, bounds[0], bounds[1]);

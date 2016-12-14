@@ -28,6 +28,7 @@
 #define FloatPoint_h
 #include <algorithm>
 #include "FloatSize.h"
+#include "IntPoint.h"
 #include "../include/core/SkPoint.h"
 #if 0
 #include "platform/geometry/IntPoint.h"
@@ -249,12 +250,22 @@ inline float operator*(const FloatPoint& a, const FloatPoint& b)
     // dot product
     return a.dot(b);
 }
+#endif
+#include <limits.h>
+inline int clampTo(double x)
+{
+    if (x > INT_MAX)
+        return INT_MAX;
+    else if (x > INT_MIN)
+        return INT_MIN;
+    return x;
+}
 
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
-    return IntPoint(clampTo<int>(roundf(p.x())), clampTo<int>(roundf(p.y())));
+    return IntPoint(clampTo(roundf(p.x())), clampTo(roundf(p.y())));
 }
-
+#if 0
 inline IntSize roundedIntSize(const FloatPoint& p)
 {
     return IntSize(clampTo<int>(roundf(p.x())), clampTo<int>(roundf(p.y())));
