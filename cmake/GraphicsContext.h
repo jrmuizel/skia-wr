@@ -125,7 +125,11 @@ struct GraphicsContext
         }
         void fillDRRect(const FloatRoundedRect& outer,
                             const FloatRoundedRect& inner, const Color& color)
-        {}
+        {
+            SkPaint paint;
+            paint.setColor(color.rgb());
+            m_canvas->drawDRRect(outer, inner, paint);
+        }
 
         void save() { m_canvas->save(); }
         void restore() { m_canvas->restore(); }

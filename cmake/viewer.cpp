@@ -207,6 +207,7 @@ main(int argc, char** argv)
         exit(EXIT_FAILURE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_STENCIL_BITS,8);
     window = glfwCreateWindow(gWidth, gHeight, "Skia viewer", NULL, NULL);
     if (!window)
     {
@@ -237,7 +238,7 @@ main(int argc, char** argv)
             desc.fConfig = kRGBA_8888_GrPixelConfig;
             desc.fOrigin = kBottomLeft_GrSurfaceOrigin;
             desc.fSampleCnt = 0;
-            desc.fStencilBits = 0;
+            desc.fStencilBits = 8;
             GrGLint buffer;
 
 #ifndef GL_FRAMEBUFFER_BINDING
