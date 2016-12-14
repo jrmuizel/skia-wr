@@ -194,11 +194,6 @@ main(int argc, char** argv)
         yaml_doc = loadYAMLFile(in_file);
     }
 
-#if 0
-    SkFILEWStream stream("out.skp");
-    pic->serialize(&stream);
-#endif
-
     std::cout << "Rendering..." << std::endl;
 
     GLFWwindow* window;
@@ -292,6 +287,10 @@ main(int argc, char** argv)
             drawYAMLFile(yaml_doc, skp_canvas);
 
             pic = recorder.finishRecordingAsPicture();
+#if 0
+            SkFILEWStream stream("out.skp");
+            pic->serialize(&stream);
+#endif
         }
 
         canvas->clear(SK_ColorWHITE);
